@@ -70,7 +70,8 @@ function updateCache() {
       isMenuShow: false,
       isResultShow: false,
       image: '',
-      
+      selectedItems: [],
+      isMultipleSelect: false,      
     },
     created() {
       this.getAllGallery(this.getImage);
@@ -217,8 +218,7 @@ function updateCache() {
           }
         })
       },
-      deleteImage(e, imageId) {
-        e.preventDefault();
+      deleteImage(imageId) {
         var _this = this;
         this.getDBRequest(function (db) {
           var request = db.transaction('images', 'readwrite').objectStore('images').delete(imageId);
@@ -272,6 +272,7 @@ function updateCache() {
         })
       },
       showViewer(id) {
+        window.history.pushState('','', window.location.origin+'/#viewImage');
         this.image = this.imageList[id].img
         this.isResultShow = true;
       },
@@ -302,7 +303,37 @@ function updateCache() {
           };
           img.src = src;
         });
-      }
+      },
+      hideViewer() {
+        this.isResultShow = false;
+        window.history.back();
+      },
+      showMultipleSelect(e) {
+        e.preventDefault();
+        this.isMultipleSelect = true;
+      },
+      hideMultipleSelect() {
+        this.isMultipleSelect = false;
+        this.selectedItems = [];
+      },
+      toggleSelect(id) {
+        let pos = this.selectedItems.indexOf(id);
+        if ( pos < 0) {
+          this.selectedItems.push(id);
+        }
+        else {
+          this.selectedItems.splice(pos, 1);
+        }
+      },
+      deleteImages() {
+        let _this = this;
+        if (window.confirm(`${this.selectedItems.length} item(s) will be removed and cannot be undone. Are you sure?`)) {
+          this.selectedItems.forEach(function(id) {
+            _this.deleteImage(id);
+          });
+          this.hideMultipleSelect();
+        }
+      },
     }
   });
   let alphaOld = undefined;
@@ -330,10 +361,12 @@ function updateCache() {
         alphaOld = undefined;
         app.shuffleImage().then(function(){ shakeLock = false;});
         if (window.navigator.vibrate) {
-          console.log('vibrate');
           window.navigator.vibrate([200, 200, 200]);
         }
       }
     }
-  })
+  });
+  window.addEventListener('hashchange', function() {
+    app.isResultShow = false;
+  });
 })()

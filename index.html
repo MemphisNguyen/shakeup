@@ -1,52 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="theme-color" content="#040">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="Shake up">
-    <link rel="manifest" href="/manifest.json">
-    <link rel="icon" href="/favicon.png" type="image/png">
-    <title>Shake up</title>
-    <!-- <script src="/assets/vue.min.js"></script> -->
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-
-    <link rel="stylesheet" href="/assets/main.css">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="theme-color" content="#127475">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-title" content="Shake up">
+	<link rel="manifest" href="/manifest.json">
+	<link rel="icon" href="/favicon.png" type="image/png">
+	<title>Shake up</title>
+	<!-- <script src="/assets/vue.min.js"></script> -->
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	
+	<link rel="stylesheet" href="/assets/main.css">
 </head>
 
 <body>
-    <div id="app">
-        <aside :class="{'show': isMenuShow}" @click="toggleMenu()">
-            <div class="menu" @click="$event.stopPropagation();">
-                <h2>Gallery</h2>
-                <ul>
-                    <li v-for="(gallery, index) in galleryList" :key="index" @click="changeGallery(gallery.id)">
-                        <span>{{ gallery.name }}</span><span class="delete-gallery"
-                            @click="deleteGallery($event, gallery.id)">X</span></li>
-                </ul>
-                <div class="add-gallery" @click="addGallery($event)"><strong>+</strong> Add gallery</div>
-            </div>
-        </aside>
-        <div class="container"><input id="file-select" class="hidden" type="file" name="" id=""
-                v-on:change="addImage($event)" accept="image/*" multiple><img id='test' alt="">
-            <div class="image-container">
-                <div class="image-item" v-for="(img, index) in imageList" :key="index" @click="showViewer(index)"><img :src="img.img" alt=""
-                        @contextmenu="deleteImage($event, img.id)"></div>
-            </div>
-            
-            <div class="action-group">
-                <button class="action menu-toggle" @click="toggleMenu">&vellip;</button>
-                <button class="action shake" @click="shuffleImage" v-if="imageList.length > 1">SHAKE</button>
-                <button class="action add" @click='triggerFileSelect' v-if="galleryId != undefined">+</button>
-            </div>
-            <div v-if="image" class="result" @click="isResultShow = false" :class="{'show': isResultShow}"><img
-                    :src="image" alt=""></div>
-        </div>
-    </div>
-    <script src="/assets/main.js" defer></script>
+	<div id="app">
+		<aside :class="{'show': isMenuShow}" @click="toggleMenu()">
+			<div class="menu" @click="$event.stopPropagation();">
+				<h2>Gallery</h2>
+				<ul>
+					<li v-for="(gallery, index) in galleryList" :key="index" @click="changeGallery(gallery.id)">
+						<span>{{ gallery.name }}</span>
+						<span class="delete-gallery" @click="deleteGallery($event, gallery.id)">X</span>
+					</li>
+				</ul>
+				<div class="add-gallery" @click="addGallery($event)"><strong>+</strong> Add gallery</div>
+			</div>
+		</aside>
+		<div class="container"><input id="file-select" class="hidden" type="file" name="" id=""
+			v-on:change="addImage($event)" accept="image/*" multiple><img id='test' alt="">
+			<div class="image-container">
+				<div class="image-item" v-for="(img, index) in imageList" :key="img.id" @click="isMultipleSelect ? toggleSelect(img.id) : showViewer(index)" @contextmenu="showMultipleSelect($event)">
+					<input v-if="isMultipleSelect" type="checkbox" :value="img.id" v-model="selectedItems" />
+					<img :src="img.img" alt="">
+				</div>
+			</div>
+			
+			<div class="action-group">
+				<template v-if="isMultipleSelect">
+					<button class="action delete" @click="deleteImages" v-if="selectedItems.length > 0">DELETE</button>
+					<button class="action cancel-multiple" :class="{'full-width': selectedItems.length === 0 }" @click="hideMultipleSelect">CANCEL</button>
+				</template>
+				<template v-else>
+					<button class="action menu-toggle" @click="toggleMenu">&vellip;</button>
+					<button class="action shake" @click="shuffleImage" v-if="imageList.length > 1">SHAKE</button>
+					<button class="action add" @click='triggerFileSelect' v-if="galleryId != undefined">+</button>
+				</template>
+			</div>
+			<div v-if="image" class="result" @click="hideViewer" :class="{'show': isResultShow}">
+				<img :src="image" alt="">
+			</div>
+		</div>
+	</div>
+	<script src="/assets/main.js" defer></script>
 </body>
 
 </html>
