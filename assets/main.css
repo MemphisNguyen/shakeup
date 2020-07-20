@@ -1,9 +1,12 @@
 body {
-    overflow: hidden;
+    overflow: auto;
     height: 100vh;
     font-family: sans-serif;
     background-color: #127475;
     color: #0D311D;
+}
+#app {
+    padding-bottom: 100px;
 }
 aside {
     position: fixed;
@@ -67,6 +70,9 @@ aside .menu h2 {
     overflow: hidden;
     position: relative;
 }
+.image-item.disabled {
+    filter: opacity(0.4) grayscale(1);
+}
 .image-item input[type="checkbox"] {
     position: absolute;
     top: 5px;
@@ -112,8 +118,11 @@ aside .menu h2 {
     background-color: #da0000;
     box-shadow: 2px 2px 10px -1px #F5DFBB;
 }
-.cancel-multiple {
+.disable {
     width: 45%;
+}
+.cancel-multiple {
+    width: 41px;
 }
 .cancel-multiple.full-width {
     width: 100%;

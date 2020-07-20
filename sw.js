@@ -1,4 +1,4 @@
-const CACHE_NAME = "shake_v1.3.0",
+const CACHE_NAME = "shake_v1.3.1",
     FILES_TO_CACHE = ["/", "/manifest.json", "/assets/main.js", "/assets/main.min.css", "/assets/vue.min.js"];
 self.addEventListener("install", function (e) {
     self.skipWaiting();

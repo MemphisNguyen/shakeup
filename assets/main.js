@@ -71,11 +71,19 @@ function updateCache() {
       isResultShow: false,
       image: '',
       selectedItems: [],
-      isMultipleSelect: false,      
+      isMultipleSelect: false,
+      disabledItems: [],
     },
     created() {
       this.getAllGallery(this.getImage);
-
+    },
+    computed: {
+      isDisableAction(){
+        let _this = this;
+        return this.selectedItems.reduce(function(acc, item){
+          return acc + (_this.disabledItems.indexOf(item) >= 0 ? 1 : -1);
+        }, 0) < 0;
+      }
     },
     methods: {
       toggleMenu() {
@@ -124,6 +132,7 @@ function updateCache() {
         if (this.galleryId == galleryId) return;
         this.galleryId = galleryId;
         this.imageList = [];
+        this.disabledItems = [];
         this.getImage();
       },
       triggerFileSelect() {
@@ -178,7 +187,6 @@ function updateCache() {
         var reader = new FileReader();
         reader.onload = async function () {
           var fileData = await _this.resizeImage(reader.result);
-          console.log(fileData);
           
           _this.getDBRequest(function (db) {
             var transaction = db.transaction('images', 'readwrite');
@@ -192,7 +200,8 @@ function updateCache() {
               _this.imageList.push({
                 id: event.target.result,
                 img: fileData
-              })
+              });
+              _this.reorderImages();
             }
           })
         }
@@ -256,13 +265,18 @@ function updateCache() {
       },
       shuffleImage() {
         var _this = this;
-        var ln = this.imageList.length;
+        var ln = this.imageList.length - this.disabledItems.length;
+        if (ln < 2) return;
         return new Promise(function(resolve){
           var intervalCount = 0
+          var disableImages = _this.imageList.filter(function (item) { return _this.disabledItems.indexOf(item.id) >= 0; })
           var intervalIdx = setInterval(function () {
             intervalCount++;
             var newOrder = _this.generateRandomOrder(ln);
-            _this.imageList = newOrder.map(function (item) { return _this.imageList[item]; });
+            _this.imageList = [
+              ...newOrder.map(function (item) { return _this.imageList[item]; }),
+              ...disableImages
+            ];
             if (intervalCount >= 10) {
               clearInterval(intervalIdx);
               resolve();
@@ -308,9 +322,10 @@ function updateCache() {
         this.isResultShow = false;
         window.history.back();
       },
-      showMultipleSelect(e) {
+      showMultipleSelect(e, id) {
         e.preventDefault();
         this.isMultipleSelect = true;
+        this.selectedItems = [id];
       },
       hideMultipleSelect() {
         this.isMultipleSelect = false;
@@ -334,6 +349,32 @@ function updateCache() {
           this.hideMultipleSelect();
         }
       },
+      toggleDisableImages() {
+        let _this = this;
+        if (this.isDisableAction) {
+          this.disabledItems = this.selectedItems.reduce(function(acc, item){
+            return acc.indexOf(item) < 0 ? [...acc, item] : acc;
+          }, this.disabledItems);
+        }
+        else {
+          this.disabledItems = this.disabledItems.filter(function(item){
+            return _this.selectedItems.indexOf(item) < 0;
+          });
+        }
+        this.reorderImages();
+        this.hideMultipleSelect();
+      },
+      reorderImages() {
+        let _this = this;
+        this.imageList = [
+          ...this.imageList.filter(function(item){
+            return _this.disabledItems.indexOf(item.id) < 0;
+          }),
+          ...this.imageList.filter(function(item){
+            return _this.disabledItems.indexOf(item.id) >= 0;
+          })
+        ];
+      }
     }
   });
   let alphaOld = undefined;

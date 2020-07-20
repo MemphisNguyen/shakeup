@@ -14,7 +14,7 @@
 	<!-- <script src="/assets/vue.min.js"></script> -->
 	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 	
-	<link rel="stylesheet" href="/assets/main.css">
+	<link rel="stylesheet" href="/assets/main.min.css">
 </head>
 
 <body>
@@ -34,7 +34,7 @@
 		<div class="container"><input id="file-select" class="hidden" type="file" name="" id=""
 			v-on:change="addImage($event)" accept="image/*" multiple><img id='test' alt="">
 			<div class="image-container">
-				<div class="image-item" v-for="(img, index) in imageList" :key="img.id" @click="isMultipleSelect ? toggleSelect(img.id) : showViewer(index)" @contextmenu="showMultipleSelect($event)">
+				<div class="image-item" v-for="(img, index) in imageList" :key="img.id" :class="{'disabled': disabledItems.indexOf(img.id) >= 0}" @click="isMultipleSelect ? toggleSelect(img.id) : showViewer(index)" @contextmenu="showMultipleSelect($event, img.id)">
 					<input v-if="isMultipleSelect" type="checkbox" :value="img.id" v-model="selectedItems" />
 					<img :src="img.img" alt="">
 				</div>
@@ -43,7 +43,14 @@
 			<div class="action-group">
 				<template v-if="isMultipleSelect">
 					<button class="action delete" @click="deleteImages" v-if="selectedItems.length > 0">DELETE</button>
-					<button class="action cancel-multiple" :class="{'full-width': selectedItems.length === 0 }" @click="hideMultipleSelect">CANCEL</button>
+					<button class="action cancel-multiple" :class="{'full-width': selectedItems.length === 0 }" @click="hideMultipleSelect">
+						<template v-if="selectedItems.length === 0">CANCEL</template>
+						<span v-else>X</span>
+					</button>
+					<button class="action disable" @click="toggleDisableImages" v-if="selectedItems.length > 0">
+						<template v-if="isDisableAction">DISABLE</template>
+						<template v-else>ENABLE</template>
+					</button>
 				</template>
 				<template v-else>
 					<button class="action menu-toggle" @click="toggleMenu">&vellip;</button>
