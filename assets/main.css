@@ -58,6 +58,10 @@ aside.show .menu {
 aside .menu h2 {
     margin: 0;
 }
+aside .menu h2 .version-no {
+    font-size: 14px;
+    font-weight: normal;
+}
 .image-container {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
