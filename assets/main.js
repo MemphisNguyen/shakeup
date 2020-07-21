@@ -411,5 +411,6 @@ function updateCache() {
   });
   window.addEventListener('hashchange', function() {
     app.isResultShow = false;
+    app.isMultipleSelect = false;
   });
 })()
