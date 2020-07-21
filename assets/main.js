@@ -326,10 +326,12 @@ function updateCache() {
         e.preventDefault();
         this.isMultipleSelect = true;
         this.selectedItems = [id];
+        window.history.pushState('','', window.location.origin+'/#multiSelect');
       },
       hideMultipleSelect() {
         this.isMultipleSelect = false;
         this.selectedItems = [];
+        window.history.back();
       },
       toggleSelect(id) {
         let pos = this.selectedItems.indexOf(id);

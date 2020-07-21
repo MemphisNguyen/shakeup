@@ -87,10 +87,10 @@ aside .menu h2 {
 }
 .action-group {
     position: fixed;
-    bottom: 20px;
+    bottom: 0;
     left: 0;
     width: 100%;
-    padding: 20px;
+    padding: 0;
     display: flex;
     justify-content: space-between;
     box-sizing: border-box;
@@ -105,6 +105,16 @@ aside .menu h2 {
     box-shadow: 2px 2px 10px -1px #562C2C;
     border: none;
     color: #F2542D;
+    margin-bottom: 30px;
+}
+.action .btn-text {
+    font-size: 12px;
+}
+.menu-toggle {
+    margin-left: 20px;
+}
+.add {
+    margin-right: 20px;
 }
 .shake {
     width: 50%;
@@ -112,20 +122,24 @@ aside .menu h2 {
     background-color: #F2542D;
     box-shadow: 2px 2px 10px -1px #F5DFBB;
 }
+.delete, .disable, .cancel-multiple {
+    padding: 20px 10px;
+    margin-bottom: 0;
+    flex-grow: 1;
+    border-radius: 0;
+    box-shadow: none;
+}
+.delete, .disable {
+    border-right: 1px solid #ddd;
+}
 .delete {
-    width: 45%;
-    color: white;
-    background-color: #da0000;
-    box-shadow: 2px 2px 10px -1px #F5DFBB;
+    color: red;
 }
 .disable {
-    width: 45%;
+    color: #127475;
 }
 .cancel-multiple {
-    width: 41px;
-}
-.cancel-multiple.full-width {
-    width: 100%;
+    color: #555;
 }
 .hidden {
     display: none;
