@@ -267,6 +267,8 @@ function updateCache() {
         var _this = this;
         var ln = this.imageList.length - this.disabledItems.length;
         if (ln < 2) return;
+        var lastItemId = _this.imageList[0].id;
+        var shuffleTime = 10;
         return new Promise(function(resolve){
           var intervalCount = 0
           var disableImages = _this.imageList.filter(function (item) { return _this.disabledItems.indexOf(item.id) >= 0; })
@@ -277,10 +279,12 @@ function updateCache() {
               ...newOrder.map(function (item) { return _this.imageList[item]; }),
               ...disableImages
             ];
-            if (intervalCount >= 10) {
-              clearInterval(intervalIdx);
-              resolve();
-              _this.showViewer(0);
+            if (intervalCount >= shuffleTime) {
+              if (intervalCount > shuffleTime || _this.imageList[0].id !== lastItemId){
+                clearInterval(intervalIdx);
+                resolve();
+                _this.showViewer(0);
+              }
             }
           }, 200);
         })
@@ -380,6 +384,7 @@ function updateCache() {
     }
   });
   let alphaOld = undefined;
+  let betaOld = undefined;
   let confirmShake = 0;
   let shakeLock = false;
   let shakeProcessTimeout = undefined;
@@ -387,9 +392,10 @@ function updateCache() {
     if (shakeLock || app.isResultShow) return;
     if (alphaOld === undefined) {
       alphaOld = e.alpha;
+      betaOld = e.beta;
       return;
     }
-    if (Math.abs(e.alpha - alphaOld) > 90) {
+    if (Math.abs(e.alpha - alphaOld) > 90 || Math.abs(e.beta - betaOld) > 90) {
       if (shakeProcessTimeout) {
         clearTimeout(shakeProcessTimeout);
       }
@@ -397,11 +403,13 @@ function updateCache() {
         confirmShake = 0;
       }, 3000);
       alphaOld = e.alpha;
+      betaOld = e.beta;
       confirmShake++;
       if (confirmShake > 9) {
         shakeLock = true;
         confirmShake = 0;
         alphaOld = undefined;
+        betaOld = undefined;
         app.shuffleImage().then(function(){ shakeLock = false;});
         if (window.navigator.vibrate) {
           window.navigator.vibrate([200, 200, 200]);
