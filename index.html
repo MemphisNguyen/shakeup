@@ -21,7 +21,7 @@
     <div id="app">
         <aside :class="{'show': isMenuShow}" @click="toggleMenu()">
             <div class="menu" @click="$event.stopPropagation();">
-                <h2>ShakeUp <span class="version-no">v1.3.9 alpha-1</span></h2>
+                <h2>ShakeUp <span class="version-no">v1.3.9</span></h2>
                 <ul>
                     <li v-for="(gallery, index) in galleryList" :key="index" @click="changeGallery(gallery.id)">
                         <span>{{ gallery.name }}</span>
