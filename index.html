@@ -1,83 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<meta name="theme-color" content="#127475">
-	<meta name="mobile-web-app-capable" content="yes">
-	<meta name="apple-mobile-web-app-status-bar-style" content="black">
-	<meta name="apple-mobile-web-app-title" content="Shake up">
-	<link rel="manifest" href="/manifest.json">
-	<link rel="icon" href="/favicon.png" type="image/png">
-	<title>Shake up</title>
-	<!-- <script src="/assets/vue.min.js"></script> -->
-	<script src="/assets/vue.min.js"></script>
-	
-	<link rel="stylesheet" href="/assets/main.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="theme-color" content="#127475">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Shake up">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="/favicon.png" type="image/png">
+    <title>Shake up</title>
+    <!-- <script src="/assets/vue.min.js"></script> -->
+    <script src="/assets/vue.min.js"></script>
+    
+    <link rel="stylesheet" href="/assets/main.min.css">
 </head>
 
 <body>
-	<div id="app">
-		<aside :class="{'show': isMenuShow}" @click="toggleMenu()">
-			<div class="menu" @click="$event.stopPropagation();">
-				<h2>ShakeUp <span class="version-no">v1.3.8</span></h2>
-				<ul>
-					<li v-for="(gallery, index) in galleryList" :key="index" @click="changeGallery(gallery.id)">
-						<span>{{ gallery.name }}</span>
-						<span class="delete-gallery" @click="deleteGallery($event, gallery.id)">X</span>
-					</li>
-				</ul>
-				<div class="add-gallery" @click="addGallery($event)"><strong>+</strong> Add gallery</div>
-			</div>
-		</aside>
-		<div class="container"><input id="file-select" class="hidden" type="file" name="" id=""
-			v-on:change="addImage($event)" accept="image/*" multiple><img id='test' alt="">
-			<div class="image-container">
-				<div class="image-item" v-for="(img, index) in imageList" :key="img.id" :class="{'disabled': disabledItems.indexOf(img.id) >= 0}" @click="isMultipleSelect ? toggleSelect(img.id) : showViewer(index)" @contextmenu="showMultipleSelect($event, img.id)">
-					<input v-if="isMultipleSelect" type="checkbox" :value="img.id" v-model="selectedItems" />
-					<img :src="img.img" alt="">
-				</div>
-			</div>
-			
-			<div class="action-group">
-				<template v-if="isMultipleSelect">
-					<button class="action delete" @click="deleteImages" v-if="selectedItems.length > 0">
-						<div class="btn-icon">
-							<svg width="20px" height="20px" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-								<path fill-rule="evenodd" d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5a.5.5 0 0 0-1 0v7a.5.5 0 0 0 1 0v-7z"/>
-							</svg>
-						</div>
-						<span class="btn-text">Delete</span>
-					</button>
-					<button class="action disable" @click="toggleDisableImages" v-if="selectedItems.length > 0">
-						<div class="btn-icon">
-							<svg width="20px" height="20px" viewBox="0 0 16 16" class="btn-icon" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-								<path fill-rule="evenodd" d="M4.54.146A.5.5 0 0 1 4.893 0h6.214a.5.5 0 0 1 .353.146l4.394 4.394a.5.5 0 0 1 .146.353v6.214a.5.5 0 0 1-.146.353l-4.394 4.394a.5.5 0 0 1-.353.146H4.893a.5.5 0 0 1-.353-.146L.146 11.46A.5.5 0 0 1 0 11.107V4.893a.5.5 0 0 1 .146-.353L4.54.146zM8 15h2.9l4.1-4.1V5.1L10.9 1H8v14z"/>
-							</svg>
-						</div>
-						<span class="btn-text" v-if="isDisableAction">Disable</span>
-						<span class="btn-text" v-else>Enable</span>
-					</button>
-					<button class="action cancel-multiple" @click="hideMultipleSelect">
-						<div class="btn-icon">
-							&#10006;
-						</div>
-						<span class="btn-text">Cancel</span>
-					</button>
-				</template>
-				<template v-else>
-					<button class="action menu-toggle" @click="toggleMenu">&vellip;</button>
-					<button class="action shake" @click="shuffleImage" v-if="imageList.length > 1">SHAKE</button>
-					<button class="action add" @click='triggerFileSelect' v-if="galleryId != undefined">+</button>
-				</template>
-			</div>
-			<div v-if="image" class="result" @click="hideViewer" :class="{'show': isResultShow}">
-				<img :src="image" alt="">
-			</div>
-		</div>
-	</div>
-	<script src="/assets/main.js" defer></script>
+    <div id="app">
+        <aside :class="{'show': isMenuShow}" @click="toggleMenu()">
+            <div class="menu" @click="$event.stopPropagation();">
+                <h2>ShakeUp <span class="version-no">v1.3.9 alpha-1</span></h2>
+                <ul>
+                    <li v-for="(gallery, index) in galleryList" :key="index" @click="changeGallery(gallery.id)">
+                        <span>{{ gallery.name }}</span>
+                        <span class="delete-gallery" @click="deleteGallery($event, gallery.id)">X</span>
+                    </li>
+                </ul>
+                <div class="add-gallery" @click="addGallery($event)"><strong>+</strong> Add gallery</div>
+            </div>
+        </aside>
+        <div class="container"><input id="file-select" class="hidden" type="file" name="" id=""
+            v-on:change="addImage($event)" accept="image/*" multiple><img id='test' alt="">
+            <div class="image-container">
+                <div class="image-item" v-for="(img, index) in imageList" :key="img.id" :class="{'disabled': disabledItems.indexOf(img.id) >= 0}" @click="isMultipleSelect ? toggleSelect(img.id) : showViewer(index)" @contextmenu="showMultipleSelect($event, img.id)">
+                    <input v-if="isMultipleSelect" type="checkbox" :value="img.id" v-model="selectedItems" />
+                    <img :src="img.img" alt="">
+                </div>
+            </div>
+            
+            <div class="action-group">
+                <template v-if="isMultipleSelect">
+                    <button class="action delete" @click="deleteImages" v-if="selectedItems.length > 0">
+                        <div class="btn-icon">
+                            <svg width="20px" height="20px" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5a.5.5 0 0 0-1 0v7a.5.5 0 0 0 1 0v-7z"/>
+                            </svg>
+                        </div>
+                        <span class="btn-text">Delete</span>
+                    </button>
+                    <button class="action disable" @click="toggleDisableImages" v-if="selectedItems.length > 0">
+                        <div class="btn-icon">
+                            <svg width="20px" height="20px" viewBox="0 0 16 16" class="btn-icon" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M4.54.146A.5.5 0 0 1 4.893 0h6.214a.5.5 0 0 1 .353.146l4.394 4.394a.5.5 0 0 1 .146.353v6.214a.5.5 0 0 1-.146.353l-4.394 4.394a.5.5 0 0 1-.353.146H4.893a.5.5 0 0 1-.353-.146L.146 11.46A.5.5 0 0 1 0 11.107V4.893a.5.5 0 0 1 .146-.353L4.54.146zM8 15h2.9l4.1-4.1V5.1L10.9 1H8v14z"/>
+                            </svg>
+                        </div>
+                        <span class="btn-text" v-if="isDisableAction">Disable</span>
+                        <span class="btn-text" v-else>Enable</span>
+                    </button>
+                    <button class="action cancel-multiple" @click="hideMultipleSelect">
+                        <div class="btn-icon">
+                            &#10006;
+                        </div>
+                        <span class="btn-text">Cancel</span>
+                    </button>
+                </template>
+                <template v-else>
+                    <button class="action menu-toggle" @click="toggleMenu">&vellip;</button>
+                    <button class="action shake" @click="shuffleImage" v-if="imageList.length > 1">SHAKE</button>
+                    <button class="action add" @click='triggerFileSelect' v-if="galleryId != undefined">+</button>
+                </template>
+            </div>
+            <div v-if="image" class="result" @click="hideViewer" :class="{'show': isResultShow}">
+                <img :src="image" alt="">
+            </div>
+        </div>
+        <div class="loader-wrap" v-show="isLoading">
+            <div class="loader-core"></div>
+            <div class="loader">
+                <div class="loader-icon"></div>
+                <div class="loader-path"></div>
+            </div>
+            <div class="loader">
+                <div class="loader-icon"></div>
+                <div class="loader-path"></div>
+            </div>
+            <div class="loader">
+                <div class="loader-icon"></div>
+                <div class="loader-path"></div>
+            </div>
+        </div>
+    </div>
+    <script src="/assets/main.js" defer></script>
 </body>
 
 </html>

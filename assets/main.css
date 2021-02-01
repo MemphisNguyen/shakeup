@@ -207,6 +207,88 @@ aside .menu h2 .version-no {
 .update-notification .actions .action-item:not(:last-child) {
     border-right: 1px solid #ccc;
 }
+.loader-wrap {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+}
+.loader-wrap .loader-core {
+    position: absolute;
+    top: calc(50% - 3px);
+    left: calc(50% - 3px);
+    width: 6px;
+    height: 6px;
+    background-color: white;
+    border-radius: 100%;
+}
+.loader-wrap .loader {
+    position: absolute;
+    top: calc(50% - 30px);
+    left: calc(50% - 30px);
+    width: 60px;
+    height: 60px;
+}
+.loader-wrap .loader .loader-icon {
+    width: 6px;
+    height: 6px;
+    background-color: #fff;
+    border-radius: 100%;
+    position: absolute;
+    top: 27px;
+    left: 27px;
+    animation: loader-move 0.9s linear 0s infinite;
+    transform-origin: center center;
+}
+.loader-wrap .loader .loader-path {
+    position: absolute;
+    top: 0;
+    left: 15px;
+    width: 29px;
+    height: 58px;
+    border: 1px solid white;
+    transform-origin: center center;
+    border-radius: 100%;
+
+}
+.loader-wrap .loader:nth-child(2) {
+    transform: rotate(120deg);
+}
+.loader-wrap .loader:nth-child(3) {
+    transform: rotate(240deg);
+}
+.loader-wrap .loader:nth-child(2) .loader-icon {
+    animation-delay: 0.3s;
+}
+.loader-wrap .loader:nth-child(3) .loader-icon {
+    animation-delay: 0.6s;
+}
+@keyframes loader-move {
+    0%   {transform: translate(    -15px,         0);}
+    5%   {transform: translate(-14.806px,   4.811px);}
+    10%  {transform: translate(-14.099px,  10.243px);}
+    15%  {transform: translate(-12.357px,  17.007px);}
+    20%  {transform: translate( -8.173px,  25.155px);}
+    25%  {transform: translate(        0,      30px);}
+    30%  {transform: translate(  8.173px,  25.155px);}
+    35%  {transform: translate( 12.357px,  17.007px);}
+    40%  {transform: translate( 14.099px,  10.243px);}
+    45%  {transform: translate( 14.806px,   4.811px);}
+    50%  {transform: translate(     15px,         0);}
+    55%  {transform: translate( 14.806px,  -4.811px);}
+    60%  {transform: translate( 14.099px, -10.243px);}
+    65%  {transform: translate( 12.357px, -17.007px);}
+    70%  {transform: translate(  8.173px, -25.155px);}
+    75%  {transform: translate(        0,     -30px);}
+    80%  {transform: translate( -8.173px, -25.155px);}
+    85%  {transform: translate(-12.357px, -17.007px);}
+    90%  {transform: translate(-14.099px, -10.243px);}
+    95%  {transform: translate(-14.806px,  -4.811px);}
+    100% {transform: translate(    -15px,         0);}
+}
 @media screen and (min-width: 1400px) {
     .container {
         max-width: 1200px;
